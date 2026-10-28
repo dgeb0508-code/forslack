@@ -111,6 +111,15 @@ language sql stable security definer set search_path = public as $$
   select exists (select 1 from task_assignees where task_id = tid and user_id = auth.uid())
 $$;
 
+create function public.can_see_profile(target uuid, target_role text) returns boolean
+language sql stable security definer set search_path = public as $$
+  select target = auth.uid()
+      or (target_role = 'prof' and exists (select 1 from project_members where user_id = auth.uid()))
+      or is_prof()
+      or exists (select 1 from project_members a join project_members b on a.project_id = b.project_id
+                 where a.user_id = auth.uid() and b.user_id = target)
+$$;
+
 -- 내부용: 알림·자동 기록 (앱에서 직접 호출 불가)
 create function public._notify(uid uuid, pid uuid, tid uuid, msg text) returns void
 language sql security definer set search_path = public as $$
@@ -250,7 +259,7 @@ grant select on all tables in schema public to authenticated;
 grant insert on public.projects, public.project_members, public.task_assignees, public.task_comments, public.messages to authenticated;
 grant update on public.projects, public.tasks to authenticated;
 grant delete on public.projects, public.project_members, public.tasks, public.task_assignees to authenticated;
-grant execute on function public.is_prof(), public.is_member(uuid), public.task_project(uuid), public.is_assignee(uuid),
+grant execute on function public.is_prof(), public.is_member(uuid), public.can_see_profile(uuid, text), public.task_project(uuid), public.is_assignee(uuid),
   public.assign_task(uuid, text, text, timestamptz, uuid[]), public.start_task(uuid),
   public.submit_task(uuid, text, text, jsonb), public.review_task(uuid, boolean, text) to authenticated, service_role;
 
@@ -260,7 +269,7 @@ grant update (name, title) on public.profiles to authenticated;
 grant update (notify, last_read_at) on public.project_members to authenticated;
 grant update (read_at) on public.notifications to authenticated;
 
-create policy "멤버 목록 보기" on public.profiles for select to authenticated using (true);
+create policy "멤버 목록 보기" on public.profiles for select to authenticated using (can_see_profile(id, role));
 create policy "내 프로필 수정" on public.profiles for update to authenticated using (id = auth.uid());
 
 create policy "참여 프로젝트 보기" on public.projects for select to authenticated using (is_member(id));
