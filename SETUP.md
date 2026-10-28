@@ -38,12 +38,11 @@ Organization 화면에서 **New organization** (Plan: **Free**) → 이어서 **
 
 **Authentication → Sign In / Providers**
 - **Allow new users to sign up**: ✅ 켜 둔다
-- **Confirm email**: ⬜ 끈다 → **Save changes**
-  (Supabase 기본 메일은 조직 멤버 주소로만, 시간당 몇 통만 보내서 학생에게 확인 메일이 가지 않는다. 승인은 교수가 하므로 메일 확인은 필요 없다)
+- **Confirm email**: ✅ 켜 둔다. 단, Supabase 기본 메일은 조직 멤버 주소로만, 시간당 몇 통만 보내므로 학생이 메일을 받으려면 **6단계의 Gmail 연결**이 필요하다 (비밀번호 찾기 메일도 이걸로 나간다)
 
 가입만 한 사람은 자기 프로필 외에는 아무것도 볼 수 없다. 교수가 프로젝트에 넣는 순간 그 프로젝트가 보인다.
 
-**확인:** 가입 켜짐, Confirm email 꺼짐, 저장됨
+**확인:** 가입 켜짐, Confirm email 켜짐
 
 ## 4단계. 교수님 계정 만들기 — 2분
 
@@ -87,6 +86,7 @@ Secret key 는 "학생 계정 만들기·임시 비밀번호 발급" 같은 교�
    - `SUPABASE_SECRET_KEY` = Secret key
 3. Deploy → 나온 주소(예: `https://forslack.vercel.app`) 를 Supabase **Authentication → URL Configuration → Site URL** 에 넣기
 4. 서버 지역 서울(icn1) 은 저장소의 `vercel.json` 에 미리 넣어 둔다
+5. **메일 발송 연결 (Gmail)**: 개인 Gmail 에서 2단계 인증 켜기 → https://myaccount.google.com/apppasswords 에서 앱 비밀번호 발급 → Supabase **Authentication → Emails → SMTP Settings** 에 Host `smtp.gmail.com`, Port `465`, Username·Sender email = Gmail 주소, Password = 앱 비밀번호 (앱 비밀번호는 채팅 금지)
 
 ## 7단계. 학생 등록
 
