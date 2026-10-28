@@ -17,3 +17,11 @@
 ## 다음 단계 (실제 서비스)
 
 Next.js + Supabase(로그인 · DB · 실시간 · 파일 저장) + PWA(홈 화면 설치, 푸시 알림).
+
+## Supabase 준비
+
+1. Supabase 대시보드 → **SQL Editor** → New query 에 `supabase/schema.sql` 전체를 붙여넣고 **Run**
+2. **Authentication → Sign In / Providers** 에서 새 가입 허용(Allow new users to sign up)을 끄고, **Authentication → Users → Invite user** 로 연구실 사람만 초대
+3. 교수 계정 지정 (SQL Editor):
+   `update profiles set role = 'prof', title = '지도교수' where id = (select id from auth.users where email = '교수님 이메일');`
+4. **Project Settings → API** 의 Project URL 과 anon(publishable) key 를 앱 설정에 넣는다. service_role(secret) key 는 앱에 넣지 않는다.
