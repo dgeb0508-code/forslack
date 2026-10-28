@@ -2,16 +2,23 @@
 
 각 단계 끝의 **확인**이 되면 다음 단계로 넘어간다.
 
-## 1단계. 지역(Region) 확인 — 1분
+## 1단계. 프로젝트 만들기 — 3분
 
-Supabase 대시보드 → 프로젝트 → **Project Settings → General** (또는 Infrastructure) 에서 Region 확인.
+Organization 화면에서 **New organization** (Plan: **Free**) → 이어서 **New project**
 
-- **Northeast Asia (Seoul)** 이면 그대로 진행
-- 다른 지역이면: 아직 데이터가 없으므로 **프로젝트를 지우고 Seoul 로 새로 만드는 것**을 권장 (지역은 나중에 못 바꾼다. 앱 서버도 서울(icn1)에 둘 것이라 DB 와 맞아야 빠르다)
+| 항목 | 입력 |
+|---|---|
+| GitHub (optional) | 건너뛰기 |
+| Project name | `labdesk` |
+| Database password | **Generate a password** → 복사해서 메모장에 보관 (채팅 금지) |
+| Region | `Asia-Pacific` 아래 **Need a specific region?** → **Northeast Asia (Seoul)** (나중에 못 바꿈) |
+| Enable Data API | ✅ 체크 |
+| Automatically expose new tables | ⬜ 해제 (schema.sql 이 필요한 권한만 직접 연다) |
+| Enable automatic RLS | ✅ 체크 (안전장치) |
 
-새로 만들 때 나오는 **Database Password** 는 메모장에 적어 프로젝트 폴더 밖에 보관. 채팅에 붙여넣지 않는다.
+**Create new project** → 1~2분 대기
 
-**확인:** Region 이 Seoul
+**확인:** 왼쪽 메뉴에 SQL Editor 가 보임
 
 ## 2단계. DB 구조 만들기 — 2분
 

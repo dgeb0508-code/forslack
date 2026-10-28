@@ -242,6 +242,18 @@ alter table public.task_comments enable row level security;
 alter table public.messages enable row level security;
 alter table public.notifications enable row level security;
 
+-- 앱에 열어 줄 권한 ("Automatically expose new tables" 를 끈 프로젝트 기준. 켜져 있어도 같은 결과)
+grant usage on schema public to anon, authenticated, service_role;
+grant all on all tables in schema public to service_role;
+grant all on all sequences in schema public to service_role;
+grant select on all tables in schema public to authenticated;
+grant insert on public.projects, public.project_members, public.task_assignees, public.task_comments, public.messages to authenticated;
+grant update on public.projects, public.tasks to authenticated;
+grant delete on public.projects, public.project_members, public.tasks, public.task_assignees to authenticated;
+grant execute on function public.is_prof(), public.is_member(uuid), public.task_project(uuid), public.is_assignee(uuid),
+  public.assign_task(uuid, text, text, timestamptz, uuid[]), public.start_task(uuid),
+  public.submit_task(uuid, text, text, jsonb), public.review_task(uuid, boolean, text) to authenticated, service_role;
+
 -- 수정 가능한 칸을 제한 (역할 role, 소속 project_id 등은 앱에서 못 바꿈)
 revoke update on public.profiles, public.project_members, public.notifications from authenticated, anon;
 grant update (name, title) on public.profiles to authenticated;
