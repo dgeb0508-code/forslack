@@ -1,0 +1,580 @@
+<title>랩데스크 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* 레이아웃: 상단 바 + 가운데 본문(최대 1080px) + 오른쪽 작업 상세 서랍. 휴대폰에서는 서랍이 전체 화면 */
+:root {
+  --bg: #f4f6f4; --surface: #ffffff; --surface-2: #eef2ef; --ink: #16201b; --muted: #5b6862; --line: #dce3de;
+  --accent: #1d6b55; --accent-ink: #ffffff; --accent-soft: #e1eee8;
+  --late: #c0392f; --late-soft: #fbe9e7; --soon: #a86a12; --soon-soft: #fbf0dc;
+  --sub: #2c5fb0; --sub-soft: #e5edfa; --done: #6a7871; --done-soft: #e9edeb;
+  --shadow: 0 10px 30px rgba(20, 40, 30, .12);
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #101513; --surface: #171e1b; --surface-2: #1d2622; --ink: #e5ebe7; --muted: #93a29a; --line: #2a3430;
+  --accent: #4fb393; --accent-ink: #0d1612; --accent-soft: #1d3129;
+  --late: #f06d61; --late-soft: #3a1f1c; --soon: #e3aa4c; --soon-soft: #36291a; --sub: #7aa2ea; --sub-soft: #1d2840; --done: #8a9a92; --done-soft: #232c28;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .45); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #101513; --surface: #171e1b; --surface-2: #1d2622; --ink: #e5ebe7; --muted: #93a29a; --line: #2a3430;
+  --accent: #4fb393; --accent-ink: #0d1612; --accent-soft: #1d3129;
+  --late: #f06d61; --late-soft: #3a1f1c; --soon: #e3aa4c; --soon-soft: #36291a; --sub: #7aa2ea; --sub-soft: #1d2840; --done: #8a9a92; --done-soft: #232c28;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .45); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.3; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+
+.pad { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 24px 96px; display: grid; gap: 28px; }
+
+/* 상단 바 */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+.top-in { max-width: 1080px; margin: 0 auto; height: 56px; display: flex; align-items: center; gap: 16px; }
+.brand { display: flex; align-items: baseline; gap: 8px; font-weight: 700; font-size: 17px; background: none; border: 0; padding: 0; }
+.brand small { font-weight: 500; font-size: 12px; color: var(--muted); }
+.nav { display: flex; gap: 4px; }
+.nav button { background: none; border: 0; padding: 6px 10px; border-radius: 6px; color: var(--muted); font-weight: 500; }
+.nav button[aria-current="true"] { color: var(--ink); background: var(--surface-2); }
+.spacer { flex: 1; }
+.bell { position: relative; background: none; border: 1px solid var(--line); border-radius: 8px; width: 38px; height: 34px; display: grid; place-items: center; }
+.bell svg { width: 18px; height: 18px; }
+.badge { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--late); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+.me { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.me button { background: none; border: 0; color: var(--muted); font-size: 13px; text-decoration: underline; padding: 0; }
+@media (max-width: 640px) { .brand small, .me .who { display: none; } .top-in { gap: 10px; } }
+
+.av { width: 28px; height: 28px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-weight: 600; background: var(--accent-soft); color: var(--accent); flex: none; }
+.av.prof { background: var(--accent); color: var(--accent-ink); }
+.avs { display: flex; } .avs .av { border: 2px solid var(--surface); margin-left: -6px; } .avs .av:first-child { margin-left: 0; }
+
+/* 공통 */
+.btn { border: 1px solid var(--line); background: var(--surface); padding: 7px 14px; border-radius: 8px; font-weight: 500; font-size: 14px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.warn { color: var(--late); border-color: var(--late); background: var(--surface); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.section-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.section-h h2 { font-size: 18px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.empty { padding: 28px; text-align: center; color: var(--muted); }
+
+.dd { font-family: var(--f-mono); font-weight: 600; font-size: 13px; padding: 2px 8px; border-radius: 6px; min-width: 58px; text-align: center; display: inline-block; font-variant-numeric: tabular-nums; }
+.dd.late { background: var(--late-soft); color: var(--late); }
+.dd.soon { background: var(--soon-soft); color: var(--soon); }
+.dd.ok { background: var(--surface-2); color: var(--muted); }
+.dd.done { background: var(--done-soft); color: var(--done); }
+.st { font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.st.assigned { background: var(--surface-2); color: var(--muted); }
+.st.doing { background: var(--accent-soft); color: var(--accent); }
+.st.submitted { background: var(--sub-soft); color: var(--sub); }
+.st.revise { background: var(--soon-soft); color: var(--soon); }
+.st.done { background: var(--done-soft); color: var(--done); }
+
+/* 로그인 */
+.login { min-height: 100%; display: grid; place-items: center; padding-block: 48px; }
+.login-card { width: 100%; max-width: 420px; display: grid; gap: 20px; padding: 28px; }
+.login-card h1 { font-size: 24px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 13px; font-weight: 500; color: var(--muted); }
+.field input, .field textarea, .field select { border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 9px 11px; width: 100%; }
+.field textarea { min-height: 76px; resize: vertical; }
+.pick { display: grid; gap: 8px; }
+.pick button { display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--line); background: var(--surface); padding: 10px 12px; border-radius: 10px; }
+.pick button:hover { border-color: var(--accent); }
+.pick .t { font-size: 12px; color: var(--muted); margin-left: auto; }
+.proto-note { font-size: 12px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 14px; }
+
+/* 홈 */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.pcard { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 18px; display: grid; gap: 12px; }
+.pcard:hover { border-color: var(--accent); }
+.pcard h3 { font-size: 16px; }
+.bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.pmeta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 13px; color: var(--muted); }
+.pmeta b { color: var(--ink); font-weight: 600; }
+.alert-chip { color: var(--sub); font-weight: 600; }
+.banner { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 16px; border-radius: 12px; background: var(--accent-soft); border: 1px solid var(--line); font-size: 14px; }
+.banner p { margin: 0; flex: 1; min-width: 200px; }
+
+/* 작업 목록 */
+.tlist { display: grid; }
+.trow { display: grid; grid-template-columns: auto 1fr auto auto; gap: 14px; align-items: center; padding: 13px 16px; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; width: 100%; }
+.trow:last-child { border-bottom: 0; }
+.trow:hover { background: var(--surface-2); }
+.trow .tt { min-width: 0; }
+.trow .tt b { font-weight: 600; display: block; overflow-wrap: anywhere; }
+.trow .tt span { font-size: 12.5px; color: var(--muted); }
+.trow .due { font-size: 13px; color: var(--muted); white-space: nowrap; }
+@media (max-width: 640px) { .trow { grid-template-columns: auto 1fr auto; } .trow .due { display: none; } }
+
+.summary { display: flex; flex-wrap: wrap; gap: 10px; }
+.sum { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); display: flex; gap: 10px; align-items: baseline; }
+.sum b { font-family: var(--f-mono); font-size: 22px; }
+.sum.late b { color: var(--late); } .sum.soon b { color: var(--soon); } .sum.sub b { color: var(--sub); }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th { text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .02em; padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+tbody tr.click { cursor: pointer; } tbody tr.click:hover { background: var(--surface-2); }
+
+/* 프로젝트 */
+.phead { display: grid; gap: 10px; }
+.crumb { background: none; border: 0; padding: 0; color: var(--muted); font-size: 13px; justify-self: start; }
+.phead h1 { font-size: 24px; }
+.prow { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+.prow select { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 5px 8px; font-size: 13px; }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); }
+.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 16px; font-weight: 600; color: var(--muted); margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tabs .cnt { font-family: var(--f-mono); font-size: 12px; margin-left: 4px; color: var(--muted); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.check { display: flex; gap: 6px; align-items: center; font-size: 14px; }
+.assign { padding: 18px; display: grid; gap: 14px; }
+.assign .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .assign .row { grid-template-columns: 1fr; } }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips label { display: flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; font-size: 13px; background: var(--bg); }
+
+/* 대화 */
+.chat { display: grid; grid-template-rows: 1fr auto; height: min(62vh, 620px); }
+.feed { overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.msg { display: flex; gap: 10px; max-width: 78%; }
+.msg .bub { background: var(--surface-2); padding: 8px 12px; border-radius: 4px 12px 12px 12px; min-width: 0; overflow-wrap: anywhere; }
+.msg .meta { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+.msg.mine { align-self: flex-end; flex-direction: row-reverse; }
+.msg.mine .bub { background: var(--accent-soft); border-radius: 12px 4px 12px 12px; }
+.mention { color: var(--accent); font-weight: 600; }
+.ev { align-self: center; max-width: 92%; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; font-size: 13px; padding: 6px 12px; border-radius: 8px; border: 1px dashed var(--line); color: var(--muted); }
+.ev button { background: none; border: 0; color: var(--accent); font-weight: 600; padding: 0; font-size: 13px; }
+.compose { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); }
+.compose input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 9px 11px; }
+
+/* 작업 상세 서랍 */
+.scrim { position: fixed; inset: 0; background: rgba(10, 20, 15, .35); z-index: 30; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100%); z-index: 31; background: var(--surface); box-shadow: var(--shadow); overflow-y: auto; padding: calc(20px + env(safe-area-inset-top, 0px)) max(22px, env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) 22px; display: grid; align-content: start; gap: 22px; }
+.drawer h2 { font-size: 20px; overflow-wrap: anywhere; }
+.dl { display: grid; grid-template-columns: 76px 1fr; gap: 8px 12px; font-size: 14px; margin: 0; }
+.dl dt { color: var(--muted); } .dl dd { margin: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.desc { white-space: pre-wrap; background: var(--bg); border-radius: 10px; padding: 12px 14px; font-size: 14px; margin: 0; }
+.blk { display: grid; gap: 10px; }
+.blk h3 { font-size: 14px; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
+.ver { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; font-size: 14px; }
+.ver .vh { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ver .vtag { font-family: var(--f-mono); font-weight: 600; font-size: 12px; background: var(--surface-2); padding: 1px 7px; border-radius: 5px; }
+.file { font-family: var(--f-mono); font-size: 13px; display: flex; gap: 8px; overflow-wrap: anywhere; }
+.actbox { border: 1px solid var(--accent); border-radius: 12px; padding: 16px; display: grid; gap: 12px; background: var(--accent-soft); }
+.actbox .field input, .actbox .field textarea { background: var(--surface); }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.cmt { display: flex; gap: 10px; font-size: 14px; } .cmt > div { min-width: 0; overflow-wrap: anywhere; }
+.close { justify-self: end; background: none; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-size: 13px; }
+
+/* 알림 */
+.npop { position: absolute; top: 48px; right: 0; width: min(360px, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); max-height: 70vh; overflow-y: auto; z-index: 25; }
+.npop-h { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: 14px; }
+.npop-h button { background: none; border: 0; color: var(--accent); font-size: 13px; padding: 0; }
+.nitem { display: grid; gap: 2px; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 11px 14px; font-size: 13.5px; }
+.nitem.unread { background: var(--accent-soft); }
+.nitem small { color: var(--muted); font-size: 12px; }
+.toasts { position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(64px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 10px; width: min(360px, calc(100vw - 32px)); }
+.toast { text-align: left; border: 1px solid var(--line); border-left: 4px solid var(--accent); background: var(--surface); box-shadow: var(--shadow); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; font-size: 14px; animation: in .25s ease-out; }
+.toast small { color: var(--muted); font-size: 12px; }
+@keyframes in { from { transform: translateY(8px); opacity: .4; } }
+@media (prefers-reduced-motion: reduce) { .toast { animation: none; } }
+
+/* 시안 조작 막대 */
+.demo { position: fixed; z-index: 35; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: var(--ink); color: var(--bg); padding: 7px 8px 7px 14px; border-radius: 999px; font-size: 13px; box-shadow: var(--shadow); max-width: calc(100vw - 32px); }
+.demo button { background: var(--bg); color: var(--ink); border: 0; border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 500; }
+</style>
+
+<div id="app"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+// ───────── 예시 데이터 (시안용. 실제 버전에서는 DB에서 불러옴) ─────────
+const DAY = 86400000;
+const today = new Date(); today.setHours(0, 0, 0, 0);
+const dayAt = n => new Date(today.getTime() + n * DAY + 18 * 3600e3); // 마감은 그날 18시
+const ago = h => new Date(Date.now() - h * 3600e3);
+
+const users = {
+  u1: { name: '김교수', role: 'prof', title: '지도교수' },
+  u2: { name: '이민준', role: 'student', title: '박사과정' },
+  u3: { name: '박서연', role: 'student', title: '석사과정' },
+  u4: { name: '최지호', role: 'student', title: '석사과정' },
+  u5: { name: '정하은', role: 'student', title: '학부연구생' },
+};
+const projects = [
+  { id: 'p1', name: '센서 데이터 이상탐지 (NRF 기초연구)', desc: '공정 센서 시계열에서 이상 구간을 찾는 모델 연구. 1차년도 중간보고 12월.', members: ['u1', 'u2', 'u3'] },
+  { id: 'p2', name: 'KCC 2026 겨울 학술대회 논문', desc: '이상탐지 결과를 정리한 국내 학회 논문. 투고 마감에 맞춰 진행.', members: ['u1', 'u3', 'u4'] },
+  { id: 'p3', name: '스마트팩토리 대시보드 (산학과제)', desc: '협력 기업 설비 데이터를 모아 보여주는 대시보드 개발.', members: ['u1', 'u2', 'u4', 'u5'] },
+];
+let seq = 100;
+const tasks = [
+  { id: 't1', pid: 'p1', title: '베이스라인 모델 3종 재현 실험', desc: 'LSTM-AE, USAD, Anomaly Transformer 세 가지를 같은 데이터셋으로 재현하고 F1을 표로 정리.', assignees: ['u2'], due: dayAt(-1), status: 'doing', subs: [], comments: [{ by: 'u2', at: ago(20), text: 'USAD 학습이 생각보다 오래 걸려서 하루 정도 늦어질 것 같습니다.' }] },
+  { id: 't2', pid: 'p1', title: '공개 데이터셋 전처리 스크립트 정리', desc: 'SWaT, SMD 두 데이터셋 전처리 코드를 하나로 정리하고 사용법 문서 작성.', assignees: ['u3'], due: dayAt(2), status: 'submitted',
+    subs: [{ v: 1, by: 'u3', at: ago(3), memo: '두 데이터셋 모두 같은 함수로 돌아가게 정리했습니다. 사용법은 PDF에 있습니다.', files: [{ name: 'preprocess.py', size: 18400 }, { name: '전처리_사용법.pdf', size: 412000 }], link: '' }], comments: [] },
+  { id: 't3', pid: 'p1', title: '중간보고서 3장(연구 방법) 초안', desc: '중간보고서 양식 3장. 분량 4~5쪽.', assignees: ['u2'], due: dayAt(9), status: 'assigned', subs: [], comments: [] },
+  { id: 't4', pid: 'p1', title: '관련 연구 20편 요약표', desc: '최근 3년 이상탐지 논문 20편을 방법/데이터/성능 기준으로 표 정리.', assignees: ['u3'], due: dayAt(-6), status: 'done',
+    subs: [{ v: 1, by: 'u3', at: ago(200), memo: '1차 정리본', files: [{ name: '관련연구_요약.xlsx', size: 52000 }], link: '' }, { v: 2, by: 'u3', at: ago(160), memo: '말씀하신 데이터셋 열 추가했습니다.', files: [{ name: '관련연구_요약_v2.xlsx', size: 58000 }], link: '' }], comments: [] },
+  { id: 't5', pid: 'p2', title: '실험 결과 표·그림 정리 (Figure 3, 4)', desc: '본문에 들어갈 Figure 3(성능 비교), Figure 4(사례 시각화) 제작.', assignees: ['u4'], due: dayAt(1), status: 'revise',
+    subs: [{ v: 1, by: 'u4', at: ago(30), memo: '그림 두 개 올립니다.', files: [{ name: 'fig3.png', size: 240000 }, { name: 'fig4.png', size: 310000 }], link: '' }],
+    comments: [{ by: 'u1', at: ago(26), text: '[수정 요청] Figure 3 축 라벨에 단위가 빠졌고, 글씨가 너무 작아요. 논문 2단 폭 기준으로 다시 맞춰 주세요.' }] },
+  { id: 't6', pid: 'p2', title: '서론·관련연구 초안', desc: '서론 1쪽, 관련연구 1쪽 분량.', assignees: ['u3'], due: dayAt(5), status: 'doing', subs: [], comments: [] },
+  { id: 't7', pid: 'p2', title: '학회 투고 양식 맞추기', desc: 'KCC 템플릿 적용, 참고문헌 형식 통일.', assignees: ['u4'], due: dayAt(12), status: 'assigned', subs: [], comments: [] },
+  { id: 't8', pid: 'p3', title: '설비 데이터 수집 API 연동', desc: '협력사 MES API에서 설비 가동 데이터 1분 단위 수집.', assignees: ['u2'], due: dayAt(3), status: 'doing', subs: [], comments: [] },
+  { id: 't9', pid: 'p3', title: '대시보드 화면 시안', desc: '가동률, 알람 현황, 설비별 상태 화면 3개 시안.', assignees: ['u5'], due: dayAt(6), status: 'doing', subs: [], comments: [] },
+  { id: 't10', pid: 'p3', title: '현장 미팅 회의록 정리', desc: '지난주 협력사 미팅 내용과 요구사항 정리.', assignees: ['u5'], due: dayAt(0), status: 'doing', subs: [], comments: [] },
+  { id: 't11', pid: 'p3', title: '10월 월간 진행보고', desc: '협력사 제출용 월간 보고서. 각자 맡은 부분 작성 후 합치기.', assignees: ['u2', 'u5'], due: dayAt(20), status: 'assigned', subs: [], comments: [] },
+];
+const feed = [
+  { pid: 'p1', at: ago(50), type: 'msg', by: 'u1', text: '이번 주 목요일 미팅 전까지 베이스라인 결과 한 번 보고 갑시다.' },
+  { pid: 'p1', at: ago(48), type: 'msg', by: 'u2', text: '네 교수님, 수요일 저녁까지 정리하겠습니다.' },
+  { pid: 'p1', at: ago(3), type: 'ev', by: 'u3', text: '「공개 데이터셋 전처리 스크립트 정리」 결과를 제출했습니다 (v1)', taskId: 't2' },
+  { pid: 'p2', at: ago(30), type: 'ev', by: 'u4', text: '「실험 결과 표·그림 정리 (Figure 3, 4)」 결과를 제출했습니다 (v1)', taskId: 't5' },
+  { pid: 'p2', at: ago(26), type: 'ev', by: 'u1', text: '「실험 결과 표·그림 정리 (Figure 3, 4)」에 수정을 요청했습니다', taskId: 't5' },
+  { pid: 'p2', at: ago(25), type: 'msg', by: 'u4', text: '확인했습니다. 내일까지 다시 올리겠습니다.' },
+  { pid: 'p3', at: ago(70), type: 'msg', by: 'u1', text: '협력사에서 화면 시안을 먼저 보고 싶어 합니다. @정하은 다음 주 중으로 가능할까요?' },
+  { pid: 'p3', at: ago(69), type: 'msg', by: 'u5', text: '네 가능합니다!' },
+];
+
+// ───────── 화면 상태 ─────────
+const S = { me: null, view: 'home', pid: null, tab: 'tasks', taskId: null, onlyMine: false, showAssign: false, bellOpen: false, pendingFiles: [], simStep: 0,
+  notifs: Object.fromEntries(Object.keys(users).map(u => [u, []])),
+  mute: {} }; // mute[uid+pid] = 'all' | 'mention' | 'off'
+const STATUS = { assigned: '지시됨', doing: '진행중', submitted: '제출됨', revise: '수정요청', done: '완료' };
+
+// ───────── 도우미 ─────────
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const U = id => users[id];
+const isProf = () => U(S.me).role === 'prof';
+const P = id => projects.find(p => p.id === id);
+const T = id => tasks.find(t => t.id === id);
+const myProjects = () => projects.filter(p => p.members.includes(S.me));
+const WD = ['일', '월', '화', '수', '목', '금', '토'];
+const fmtDue = d => `${d.getMonth() + 1}/${d.getDate()} (${WD[d.getDay()]})`;
+const fmtAt = d => { const h = (Date.now() - d) / 3600e3; if (h < 1 / 60) return '방금'; if (h < 1) return `${Math.floor(h * 60)}분 전`; if (h < 24) return `${Math.floor(h)}시간 전`; return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+const fmtSize = b => b > 1e6 ? (b / 1e6).toFixed(1) + 'MB' : Math.max(1, Math.round(b / 1e3)) + 'KB';
+const av = id => `<span class="av ${U(id).role === 'prof' ? 'prof' : ''}" title="${esc(U(id).name)}">${esc(U(id).name.slice(-2))}</span>`;
+const names = ids => ids.map(i => U(i).name).join(', ');
+function dday(t) {
+  if (t.status === 'done') return { label: '완료', cls: 'done', n: 999 };
+  const n = Math.round((new Date(t.due).setHours(0, 0, 0, 0) - today) / DAY);
+  return { label: n > 0 ? `D-${n}` : n === 0 ? 'D-day' : `D+${-n}`, cls: n < 0 ? 'late' : n <= 3 ? 'soon' : 'ok', n };
+}
+const sortTasks = list => [...list].sort((a, b) => (a.status === 'done') - (b.status === 'done') || a.due - b.due);
+const muteOf = (uid, pid) => S.mute[uid + pid] || 'all';
+const mentionsIn = (text, pid) => P(pid).members.filter(u => text.includes('@' + U(u).name));
+const hl = (text, pid) => { let h = esc(text); P(pid).members.forEach(u => { h = h.split('@' + esc(U(u).name)).join(`<span class="mention">@${esc(U(u).name)}</span>`); }); return h; };
+
+// ───────── 알림 ─────────
+function notify(uid, text, pid, taskId) {
+  if (!uid || uid === S.actor) return;
+  const n = { text, pid, taskId, at: new Date(), read: false };
+  S.notifs[uid].unshift(n);
+  if (uid !== S.me) return;
+  showToast(n);
+  try { if ('Notification' in window && Notification.permission === 'granted') new Notification('랩데스크', { body: text }); } catch (e) {}
+}
+function showToast(n) {
+  const box = document.getElementById('toasts');
+  const el = document.createElement('button');
+  el.className = 'toast';
+  el.innerHTML = `<b>${esc(n.text)}</b><small>${esc(P(n.pid).name)} · 방금</small>`;
+  el.onclick = () => { openNotif(n); el.remove(); };
+  box.prepend(el);
+  setTimeout(() => el.remove(), 6000);
+}
+function openNotif(n) {
+  n.read = true; S.view = 'project'; S.pid = n.pid; S.bellOpen = false;
+  if (n.taskId) { S.taskId = n.taskId; S.tab = 'tasks'; } else { S.taskId = null; S.tab = 'chat'; }
+  render();
+}
+let permMsg = '';
+async function askPermission() {
+  try {
+    if (!('Notification' in window)) throw 0;
+    const r = await Notification.requestPermission();
+    permMsg = r === 'granted' ? '브라우저 알림이 켜졌습니다. 다른 창을 보고 있어도 알림이 뜹니다.' : '이 미리보기 창에서는 브라우저 알림이 막혀 있습니다. 실제 사이트에서는 운영체제 알림으로 뜨고, 여기서는 화면 오른쪽 아래 알림으로 대신 보여드립니다.';
+  } catch (e) { permMsg = '이 미리보기 창에서는 브라우저 알림이 막혀 있습니다. 실제 사이트에서는 운영체제 알림으로 뜨고, 여기서는 화면 오른쪽 아래 알림으로 대신 보여드립니다.'; }
+  render();
+}
+
+// ───────── 동작 (누가 했는지 S.actor 로 기록) ─────────
+function act(actor, fn) { const prev = S.actor; S.actor = actor; try { fn(); } finally { S.actor = prev; } }
+function post(pid, by, type, text, taskId) { feed.push({ pid, at: new Date(), type, by, text, taskId }); }
+const profsOf = pid => P(pid).members.filter(u => U(u).role === 'prof');
+
+function assignTask(by, pid, title, desc, assignees, due) {
+  const t = { id: 't' + (++seq), pid, title, desc, assignees, due, status: 'assigned', subs: [], comments: [] };
+  tasks.push(t);
+  post(pid, by, 'ev', `「${title}」를 ${names(assignees)} 님에게 지시했습니다 (마감 ${fmtDue(due)})`, t.id);
+  assignees.forEach(u => notify(u, `새 작업: 「${title}」 마감 ${fmtDue(due)}`, pid, t.id));
+}
+function submitTask(by, t, memo, files, link) {
+  const v = t.subs.length + 1;
+  t.subs.push({ v, by, at: new Date(), memo, files, link });
+  t.status = 'submitted';
+  post(t.pid, by, 'ev', `「${t.title}」 결과를 제출했습니다 (v${v})`, t.id);
+  profsOf(t.pid).forEach(u => notify(u, `${U(by).name} 님이 「${t.title}」를 제출했습니다 (v${v}) · 확인 필요`, t.pid, t.id));
+}
+function reviewTask(by, t, ok, note) {
+  t.status = ok ? 'done' : 'revise';
+  if (note) t.comments.push({ by, at: new Date(), text: (ok ? '' : '[수정 요청] ') + note });
+  post(t.pid, by, 'ev', ok ? `「${t.title}」를 완료 처리했습니다` : `「${t.title}」에 수정을 요청했습니다`, t.id);
+  t.assignees.forEach(u => notify(u, ok ? `「${t.title}」 완료 처리됨` : `「${t.title}」 수정 요청: ${note}`, t.pid, t.id));
+}
+function commentTask(by, t, text) {
+  t.comments.push({ by, at: new Date(), text });
+  [...new Set([...t.assignees, ...profsOf(t.pid)])].forEach(u => notify(u, `${U(by).name} 님의 댓글 · 「${t.title}」: ${text}`, t.pid, t.id));
+}
+function chat(by, pid, text) {
+  post(pid, by, 'msg', text);
+  const mentioned = mentionsIn(text, pid);
+  P(pid).members.forEach(u => {
+    const m = muteOf(u, pid), hit = mentioned.includes(u);
+    if (m === 'all' || (m === 'mention' && hit)) notify(u, `${U(by).name}${hit ? ' 님이 회원님을 호출했습니다' : ''}: ${text}`, pid);
+  });
+}
+
+// ───────── 다른 사람이 보낸 것처럼 보여주는 데모 이벤트 ─────────
+function simulate() {
+  const step = S.simStep++;
+  if (isProf()) {
+    const t = tasks.find(t => t.status === 'doing' && t.assignees.some(u => U(u).role === 'student'));
+    if (step % 2 === 0 && t) {
+      const by = t.assignees[0];
+      act(by, () => submitTask(by, t, '정리해서 올립니다. 확인 부탁드립니다.', [{ name: '결과_정리_v' + (t.subs.length + 1) + '.pdf', size: 820000 }], ''));
+    } else {
+      act('u4', () => chat('u4', 'p2', '교수님, Figure 3 수정본 오늘 저녁까지 올리겠습니다.'));
+    }
+  } else {
+    const p = myProjects()[step % myProjects().length];
+    const mine = tasks.find(t => t.pid === p.id && t.assignees.includes(S.me) && t.status !== 'done');
+    if (step % 2 === 1 && mine) act('u1', () => commentTask('u1', mine, '진행 상황 어떤가요? 막히는 부분 있으면 여기 남겨 주세요.'));
+    else act('u1', () => chat('u1', p.id, `@${U(S.me).name} 내일 미팅 전에 진행한 내용 한 번 공유해 주세요.`));
+  }
+  render();
+}
+
+// ───────── 화면 ─────────
+function loginView() {
+  return `<div class="login pad"><div class="panel login-card">
+    <div><h1>랩데스크</h1><p class="muted" style="margin:4px 0 0">지능데이터 연구실 협업 공간</p></div>
+    <div class="field"><label for="lg-email">학교 이메일</label><input id="lg-email" type="email" value="" placeholder="name@univ.ac.kr" autocomplete="off"></div>
+    <div class="field"><label for="lg-pw">비밀번호</label><input id="lg-pw" type="password" placeholder="••••••••"></div>
+    <div class="proto-note">시안이라 실제 로그인은 없습니다. 아래에서 계정을 골라 들어가 보세요. 교수 계정으로 작업을 지시한 뒤 학생 계정으로 바꾸면, 지시한 작업이 학생 목록에 그대로 보입니다.</div>
+    <div class="pick">${Object.entries(users).map(([id, u]) => `<button data-act="login" data-id="${id}">${av(id)}<b>${esc(u.name)}</b><span class="t">${esc(u.title)}</span></button>`).join('')}</div>
+  </div></div>`;
+}
+function headerView() {
+  const list = S.notifs[S.me], unread = list.filter(n => !n.read).length;
+  return `<header class="top pad"><div class="top-in">
+    <button class="brand" data-act="go" data-view="home">랩데스크 <small>지능데이터 연구실</small></button>
+    <nav class="nav"><button data-act="go" data-view="home" aria-current="${S.view === 'home'}">홈</button>${isProf() ? `<button data-act="go" data-view="overview" aria-current="${S.view === 'overview'}">전체 현황</button>` : ''}</nav>
+    <span class="spacer"></span>
+    <div style="position:relative">
+      <button class="bell" data-act="bell" aria-label="알림 ${unread}건"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>${unread ? `<span class="badge">${unread}</span>` : ''}</button>
+      ${S.bellOpen ? `<div class="npop"><div class="npop-h">알림 <button data-act="readall">모두 읽음</button></div>
+        ${list.length ? list.map((n, i) => `<button class="nitem ${n.read ? '' : 'unread'}" data-act="notif" data-i="${i}">${esc(n.text)}<small>${esc(P(n.pid).name)} · ${fmtAt(n.at)}</small></button>`).join('') : '<div class="empty small">새 알림이 없습니다.</div>'}</div>` : ''}
+    </div>
+    <div class="me">${av(S.me)}<span class="who">${esc(U(S.me).name)}</span><button data-act="logout">계정 전환</button></div>
+  </div></header>`;
+}
+function taskRow(t, showProject) {
+  const d = dday(t);
+  return `<button class="trow" data-act="task" data-id="${t.id}">
+    <span class="dd ${d.cls}">${d.label}</span>
+    <span class="tt"><b>${esc(t.title)}</b><span>${showProject ? esc(P(t.pid).name) + ' · ' : ''}${esc(names(t.assignees))}</span></span>
+    <span class="due num">${fmtDue(t.due)}</span>
+    <span class="st ${t.status}">${STATUS[t.status]}</span></button>`;
+}
+function homeView() {
+  const ps = myProjects();
+  const notifOff = !('Notification' in window) || Notification.permission !== 'granted';
+  const todo = isProf()
+    ? sortTasks(tasks.filter(t => t.status === 'submitted' || (t.status !== 'done' && dday(t).n < 0)))
+    : sortTasks(tasks.filter(t => t.assignees.includes(S.me) && t.status !== 'done'));
+  return `
+  ${notifOff ? `<div class="banner"><p>${permMsg ? esc(permMsg) : '브라우저 알림을 켜 두면 다른 창을 보고 있어도 새 작업, 제출, 호출 소식을 바로 받을 수 있습니다.'}</p>${permMsg ? '' : '<button class="btn primary" data-act="perm">알림 켜기</button>'}</div>` : ''}
+  <section style="display:grid;gap:12px">
+    <div class="section-h"><h2>${isProf() ? '확인이 필요한 작업' : '내 작업'}</h2><span class="muted small">${isProf() ? '제출됐거나 마감이 지난 작업' : '마감이 가까운 순서'}</span></div>
+    <div class="panel tlist">${todo.length ? todo.map(t => taskRow(t, true)).join('') : '<div class="empty">지금 확인할 작업이 없습니다.</div>'}</div>
+  </section>
+  <section style="display:grid;gap:12px">
+    <div class="section-h"><h2>프로젝트</h2><span class="muted small">${ps.length}개 참여 중</span></div>
+    <div class="cards">${ps.map(p => {
+      const ts = tasks.filter(t => t.pid === p.id), done = ts.filter(t => t.status === 'done').length;
+      const open = sortTasks(ts.filter(t => t.status !== 'done')), next = open[0];
+      const review = ts.filter(t => t.status === 'submitted').length;
+      const mine = ts.filter(t => t.assignees.includes(S.me) && t.status !== 'done').length;
+      return `<button class="pcard" data-act="project" data-id="${p.id}">
+        <h3>${esc(p.name)}</h3>
+        <div class="bar" aria-label="진행률"><i style="width:${ts.length ? Math.round(done / ts.length * 100) : 0}%"></i></div>
+        <div class="pmeta"><span>완료 <b class="num">${done}/${ts.length}</b></span>
+          ${next ? `<span>가장 가까운 마감 <span class="dd ${dday(next).cls}">${dday(next).label}</span></span>` : ''}
+          ${isProf() ? (review ? `<span class="alert-chip">확인 대기 ${review}건</span>` : '') : `<span>내 작업 <b class="num">${mine}</b>건</span>`}</div>
+        <div class="avs">${p.members.map(av).join('')}</div></button>`;
+    }).join('')}</div>
+  </section>`;
+}
+function overviewView() {
+  const open = sortTasks(tasks.filter(t => t.status !== 'done'));
+  const late = open.filter(t => dday(t).n < 0).length, soon = open.filter(t => dday(t).n >= 0 && dday(t).n <= 3).length, sub = open.filter(t => t.status === 'submitted').length;
+  return `<section style="display:grid;gap:14px">
+    <div class="section-h"><h2>전체 현황</h2><span class="muted small">모든 프로젝트의 진행 중인 작업 · 마감 순</span></div>
+    <div class="summary"><div class="sum late"><b>${late}</b>마감 지남</div><div class="sum soon"><b>${soon}</b>3일 이내 마감</div><div class="sum sub"><b>${sub}</b>확인 대기</div><div class="sum"><b>${open.length}</b>진행 중 전체</div></div>
+    <div class="panel table-wrap"><table><thead><tr><th>마감</th><th>작업</th><th>프로젝트</th><th>담당</th><th>날짜</th><th>상태</th></tr></thead><tbody>
+    ${open.map(t => `<tr class="click" data-act="task" data-id="${t.id}"><td><span class="dd ${dday(t).cls}">${dday(t).label}</span></td><td><b>${esc(t.title)}</b></td><td class="muted">${esc(P(t.pid).name)}</td><td>${esc(names(t.assignees))}</td><td class="num muted">${fmtDue(t.due)}</td><td><span class="st ${t.status}">${STATUS[t.status]}</span></td></tr>`).join('')}
+    </tbody></table></div>
+  </section>`;
+}
+function projectView() {
+  const p = P(S.pid), ts = tasks.filter(t => t.pid === p.id);
+  const shown = sortTasks(S.onlyMine ? ts.filter(t => t.assignees.includes(S.me)) : ts);
+  const subs = ts.flatMap(t => t.subs.map(s => ({ ...s, t }))).sort((a, b) => b.at - a.at);
+  const m = muteOf(S.me, p.id);
+  const students = p.members.filter(u => U(u).role === 'student');
+  let body = '';
+  if (S.tab === 'tasks') body = `
+    <div class="toolbar"><label class="check"><input type="checkbox" id="only-mine" ${S.onlyMine ? 'checked' : ''}> 내 작업만 보기</label>
+      ${isProf() ? `<button class="btn primary" data-act="toggle-assign">${S.showAssign ? '닫기' : '+ 작업 지시'}</button>` : ''}</div>
+    ${S.showAssign ? `<form class="panel assign" id="assign-form">
+      <div class="field"><label for="as-title">작업 제목</label><input id="as-title" required placeholder="예: 실험 결과 표 정리"></div>
+      <div class="field"><label for="as-desc">내용</label><textarea id="as-desc" placeholder="무엇을, 어느 수준까지 해 오면 되는지"></textarea></div>
+      <div class="row"><div class="field"><label>담당자</label><div class="chips">${students.map(u => `<label><input type="checkbox" name="as-who" value="${u}"> ${esc(U(u).name)}</label>`).join('')}</div></div>
+      <div class="field"><label for="as-due">마감일</label><input id="as-due" type="date" required value="${new Date(today.getTime() + 7 * DAY + 9 * 3600e3).toISOString().slice(0, 10)}"></div></div>
+      <div class="btns"><button class="btn primary" type="submit">지시하기</button><span class="muted small" id="as-err"></span></div></form>` : ''}
+    <div class="panel tlist">${shown.length ? shown.map(t => taskRow(t)).join('') : '<div class="empty">작업이 없습니다.</div>'}</div>`;
+  else if (S.tab === 'chat') body = `
+    <div class="panel chat"><div class="feed" id="feed">${feed.filter(f => f.pid === p.id).map(f => f.type === 'ev'
+      ? `<div class="ev">${av(f.by)}<span><b>${esc(U(f.by).name)}</b> ${esc(f.text)}</span>${f.taskId ? `<button data-act="task" data-id="${f.taskId}">열기</button>` : ''}<span class="small">${fmtAt(f.at)}</span></div>`
+      : `<div class="msg ${f.by === S.me ? 'mine' : ''}">${av(f.by)}<div class="bub"><div class="meta">${esc(U(f.by).name)} · ${fmtAt(f.at)}</div>${hl(f.text, p.id)}</div></div>`).join('')}</div>
+      <form class="compose" id="chat-form"><input id="chat-in" placeholder="메시지 입력 · @이름 으로 호출" autocomplete="off"><button class="btn primary" type="submit">보내기</button></form></div>
+    <p class="muted small" style="margin:0">작업 지시, 제출, 완료, 수정요청은 이 대화방에 자동으로 기록됩니다. 따로 보고 메시지를 쓰지 않아도 됩니다.</p>`;
+  else body = `<div class="panel table-wrap">${subs.length ? `<table><thead><tr><th>파일 / 링크</th><th>작업</th><th>버전</th><th>올린 사람</th><th>올린 때</th></tr></thead><tbody>
+    ${subs.map(s => `<tr class="click" data-act="task" data-id="${s.t.id}"><td>${s.files.map(f => `<div class="file">${esc(f.name)} <span class="muted">${fmtSize(f.size)}</span></div>`).join('')}${s.link ? `<div class="file">🔗 ${esc(s.link)}</div>` : ''}</td><td>${esc(s.t.title)}</td><td class="num">v${s.v}</td><td>${esc(U(s.by).name)}</td><td class="muted small">${fmtAt(s.at)}</td></tr>`).join('')}
+    </tbody></table>` : '<div class="empty">아직 제출된 자료가 없습니다.</div>'}</div>
+    <p class="muted small" style="margin:0">자료실은 따로 올리는 곳이 아니라 각 작업에 제출된 파일을 모아 보여주는 화면입니다.</p>`;
+  return `<section class="phead">
+    <button class="crumb" data-act="go" data-view="home">← 프로젝트 목록</button>
+    <h1>${esc(p.name)}</h1><p class="muted" style="margin:0">${esc(p.desc)}</p>
+    <div class="prow"><div class="avs">${p.members.map(av).join('')}</div>
+      <label class="small muted">이 프로젝트 알림 <select id="mute-sel"><option value="all" ${m === 'all' ? 'selected' : ''}>모든 메시지</option><option value="mention" ${m === 'mention' ? 'selected' : ''}>나를 호출할 때만</option><option value="off" ${m === 'off' ? 'selected' : ''}>대화 알림 끄기</option></select></label></div>
+  </section>
+  <div style="display:grid;gap:16px">
+    <div class="tabs" role="tablist">
+      <button role="tab" data-act="tab" data-tab="tasks" aria-selected="${S.tab === 'tasks'}">작업<span class="cnt">${ts.filter(t => t.status !== 'done').length}</span></button>
+      <button role="tab" data-act="tab" data-tab="chat" aria-selected="${S.tab === 'chat'}">대화</button>
+      <button role="tab" data-act="tab" data-tab="files" aria-selected="${S.tab === 'files'}">자료<span class="cnt">${subs.length}</span></button>
+    </div>${body}</div>`;
+}
+function drawerView() {
+  const t = T(S.taskId), d = dday(t), mine = t.assignees.includes(S.me);
+  let action = '';
+  if (!isProf() && mine && t.status === 'assigned') action = `<div class="actbox"><b>새로 지시된 작업입니다.</b><div class="btns"><button class="btn primary" data-act="start">작업 시작</button></div></div>`;
+  else if (!isProf() && mine && (t.status === 'doing' || t.status === 'revise')) action = `<form class="actbox" id="sub-form"><b>결과 제출${t.subs.length ? ` (v${t.subs.length + 1})` : ''}</b>
+    <div class="field"><label for="sub-memo">메모</label><textarea id="sub-memo" placeholder="무엇을 했는지, 확인해 주셨으면 하는 점"></textarea></div>
+    <div class="field"><label for="sub-files">파일</label><input id="sub-files" type="file" multiple>${S.pendingFiles.length ? `<div>${S.pendingFiles.map(f => `<div class="file">${esc(f.name)} <span class="muted">${fmtSize(f.size)}</span></div>`).join('')}</div>` : ''}</div>
+    <div class="field"><label for="sub-link">또는 링크 (큰 데이터·코드는 Drive, GitHub 링크로)</label><input id="sub-link" placeholder="https://"></div>
+    <div class="btns"><button class="btn primary" type="submit">제출하기</button><span class="small muted" id="sub-err"></span></div></form>`;
+  else if (isProf() && t.status === 'submitted') action = `<div class="actbox"><b>v${t.subs.length} 제출을 확인해 주세요</b>
+    <div class="field"><label for="rv-note">의견 (수정 요청 시 필수)</label><textarea id="rv-note" placeholder="수정할 점이나 확인 의견"></textarea></div>
+    <div class="btns"><button class="btn primary" data-act="approve">완료 처리</button><button class="btn warn" data-act="revise">수정 요청</button><span class="small muted" id="rv-err"></span></div></div>`;
+  return `<div class="scrim" data-act="close"></div><aside class="drawer" aria-label="작업 상세">
+    <button class="close" data-act="close">닫기 ✕</button>
+    <div style="display:grid;gap:8px"><span class="muted small">${esc(P(t.pid).name)}</span><h2>${esc(t.title)}</h2></div>
+    <dl class="dl"><dt>상태</dt><dd><span class="st ${t.status}">${STATUS[t.status]}</span></dd>
+      <dt>마감</dt><dd><span class="dd ${d.cls}">${d.label}</span><span class="num">${fmtDue(t.due)}</span></dd>
+      <dt>담당</dt><dd>${t.assignees.map(u => av(u) + esc(U(u).name)).join(' ')}</dd></dl>
+    ${t.desc ? `<p class="desc">${esc(t.desc)}</p>` : ''}
+    ${action}
+    <div class="blk"><h3>제출 이력</h3>${t.subs.length ? [...t.subs].reverse().map(s => `<div class="ver"><div class="vh"><span class="vtag">v${s.v}</span><b>${esc(U(s.by).name)}</b><span class="muted small">${fmtAt(s.at)}</span></div>
+      ${s.memo ? `<div>${esc(s.memo)}</div>` : ''}${s.files.map(f => `<div class="file">📄 ${esc(f.name)} <span class="muted">${fmtSize(f.size)}</span></div>`).join('')}${s.link ? `<div class="file">🔗 ${esc(s.link)}</div>` : ''}</div>`).join('') : '<span class="muted small">아직 제출이 없습니다.</span>'}</div>
+    <div class="blk"><h3>댓글</h3>${t.comments.map(c => `<div class="cmt">${av(c.by)}<div><b>${esc(U(c.by).name)}</b> <span class="muted small">${fmtAt(c.at)}</span><div>${esc(c.text)}</div></div></div>`).join('') || '<span class="muted small">댓글이 없습니다.</span>'}
+      <form class="compose" id="cmt-form" style="padding:0;border:0"><input id="cmt-in" placeholder="이 작업에 대한 댓글" autocomplete="off"><button class="btn" type="submit">등록</button></form></div>
+  </aside>`;
+}
+function demoBar() {
+  return `<div class="demo">시안 <button data-act="sim">다른 사람 활동 받아보기</button></div>`;
+}
+
+// ───────── 그리기 (입력 중인 값은 유지) ─────────
+function render() {
+  const app = document.getElementById('app');
+  const keep = {}, focus = document.activeElement && document.activeElement.id;
+  app.querySelectorAll('input[id],textarea[id]').forEach(el => { if (el.type !== 'file' && el.type !== 'checkbox') keep[el.id] = el.value; });
+  const feedEl = document.getElementById('feed'), atBottom = !feedEl || feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight < 40;
+  if (!S.me) app.innerHTML = loginView();
+  else app.innerHTML = headerView() + `<main class="wrap pad">${S.view === 'overview' ? overviewView() : S.view === 'project' ? projectView() : homeView()}</main>` + (S.taskId ? drawerView() : '') + demoBar();
+  for (const id in keep) { const el = document.getElementById(id); if (el) el.value = keep[id]; }
+  if (focus) { const el = document.getElementById(focus); if (el) el.focus(); }
+  const f = document.getElementById('feed'); if (f && atBottom) f.scrollTop = f.scrollHeight;
+}
+
+// ───────── 이벤트 ─────────
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) { if (S.bellOpen && !e.target.closest('.npop')) { S.bellOpen = false; render(); } return; }
+  const a = el.dataset.act, me = S.me;
+  if (a !== 'bell' && a !== 'notif' && a !== 'readall') S.bellOpen = false;
+  if (a === 'login') { S.me = el.dataset.id; S.view = 'home'; S.taskId = null; S.simStep = 0; clearTimeout(S.timer); S.timer = setTimeout(simulate, 7000); }
+  else if (a === 'logout') { S.me = null; clearTimeout(S.timer); }
+  else if (a === 'go') { S.view = el.dataset.view; S.taskId = null; }
+  else if (a === 'project') { S.view = 'project'; S.pid = el.dataset.id; S.tab = 'tasks'; S.showAssign = false; }
+  else if (a === 'tab') S.tab = el.dataset.tab;
+  else if (a === 'task') { const t = T(el.dataset.id); S.taskId = t.id; S.pendingFiles = []; if (S.view !== 'project' || S.pid !== t.pid) { S.view = 'project'; S.pid = t.pid; S.tab = 'tasks'; } }
+  else if (a === 'close') { S.taskId = null; S.pendingFiles = []; }
+  else if (a === 'toggle-assign') S.showAssign = !S.showAssign;
+  else if (a === 'bell') S.bellOpen = !S.bellOpen;
+  else if (a === 'readall') S.notifs[me].forEach(n => n.read = true);
+  else if (a === 'notif') return openNotif(S.notifs[me][+el.dataset.i]);
+  else if (a === 'perm') return askPermission();
+  else if (a === 'sim') return simulate();
+  else if (a === 'start') { const t = T(S.taskId); t.status = 'doing'; }
+  else if (a === 'approve' || a === 'revise') {
+    const t = T(S.taskId), note = document.getElementById('rv-note').value.trim();
+    if (a === 'revise' && !note) { document.getElementById('rv-err').textContent = '수정할 내용을 적어 주세요.'; return; }
+    act(me, () => reviewTask(me, t, a === 'approve', note)); document.getElementById('rv-note').value = '';
+  }
+  render();
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'only-mine') { S.onlyMine = e.target.checked; render(); }
+  if (e.target.id === 'mute-sel') { S.mute[S.me + S.pid] = e.target.value; }
+  if (e.target.id === 'sub-files') { S.pendingFiles = [...e.target.files].map(f => ({ name: f.name, size: f.size })); render(); }
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const me = S.me, id = e.target.id, val = x => document.getElementById(x).value.trim();
+  if (id === 'chat-form') { const txt = val('chat-in'); if (!txt) return; document.getElementById('chat-in').value = ''; act(me, () => chat(me, S.pid, txt)); }
+  if (id === 'cmt-form') { const txt = val('cmt-in'); if (!txt) return; document.getElementById('cmt-in').value = ''; act(me, () => commentTask(me, T(S.taskId), txt)); }
+  if (id === 'sub-form') {
+    const memo = val('sub-memo'), link = val('sub-link');
+    if (!S.pendingFiles.length && !link) { document.getElementById('sub-err').textContent = '파일이나 링크 중 하나는 있어야 합니다.'; return; }
+    act(me, () => submitTask(me, T(S.taskId), memo, S.pendingFiles, link));
+    S.pendingFiles = []; document.getElementById('sub-memo').value = ''; document.getElementById('sub-link').value = '';
+  }
+  if (id === 'assign-form') {
+    const who = [...document.querySelectorAll('input[name="as-who"]:checked')].map(x => x.value);
+    if (!who.length) { document.getElementById('as-err').textContent = '담당자를 한 명 이상 골라 주세요.'; return; }
+    const [y, mo, dd] = val('as-due').split('-').map(Number);
+    act(me, () => assignTask(me, S.pid, val('as-title'), val('as-desc'), who, new Date(y, mo - 1, dd, 18)));
+    S.showAssign = false; document.getElementById('as-title').value = ''; document.getElementById('as-desc').value = '';
+  }
+  render();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && (S.taskId || S.bellOpen)) { S.taskId = null; S.bellOpen = false; render(); } });
+render();
+</script>
